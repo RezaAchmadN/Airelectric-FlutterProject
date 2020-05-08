@@ -1,0 +1,8 @@
+0000000000000000000000000000000000000000 105c76d932264743ffbfddc0a2ca603e88c91186 rezaa <reza_naufal21@apps.ipb.ac.id> 1587963268 +0700	commit (initial): add splashscreen
+105c76d932264743ffbfddc0a2ca603e88c91186 b8b2734f2aff10420448fbdcc53aa18637ef1b86 rezaa <reza_naufal21@apps.ipb.ac.id> 1588006871 +0700	commit: add Login Screen
+b8b2734f2aff10420448fbdcc53aa18637ef1b86 83a1d4477339b5aa7a984e4bd33a0c12b9ae7659 rezaa <reza_naufal21@apps.ipb.ac.id> 1588093723 +0700	commit: fixing loginPage
+83a1d4477339b5aa7a984e4bd33a0c12b9ae7659 4254754d2bef6cc14164dcbfafc175337bc1e625 rezaa <reza_naufal21@apps.ipb.ac.id> 1588622130 +0700	commit: add dashboardPage
+4254754d2bef6cc14164dcbfafc175337bc1e625 1d996b46be5ef8c541a6658c704e623224331fab rezaa <reza_naufal21@apps.ipb.ac.id> 1588654917 +0700	commit: add AirConditionPage
+1d996b46be5ef8c541a6658c704e623224331fab 35b5e26e19fb6727efc0f23a629eb6545a354f71 rezaa <reza_naufal21@apps.ipb.ac.id> 1588664366 +0700	commit: add line chart to AirConditionPage
+35b5e26e19fb6727efc0f23a629eb6545a354f71 d6897436aa26b101dfe32c60c4769a5955f93274 rezaa <reza_naufal21@apps.ipb.ac.id> 1588838958 +0700	commit: add Air Condition set by API unless History
+d6897436aa26b101dfe32c60c4769a5955f93274 27d8bb44b141256c11116a6ece6aeea3cc28add5 rezaa <reza_naufal21@apps.ipb.ac.id> 1588898522 +0700	commit: set History by API
