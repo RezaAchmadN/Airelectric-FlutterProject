@@ -267,8 +267,8 @@ abstract class AirConditionController extends State<AirConditionView> {
       setState(() {
         // isLoading2False();
       });
-      print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-      //jsonCity = json.decode(response.body);
+      print(response.body);
+      this.jsonUpdateOrCreateAirCondition = json.decode(response.body);
       Fluttertoast.showToast(
           msg: response.statusCode.toString(),
           toastLength: Toast.LENGTH_LONG,

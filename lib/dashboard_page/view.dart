@@ -1,4 +1,5 @@
 import 'package:airelectric/dashboard_page/controller.dart';
+import 'package:bezier_chart/bezier_chart.dart';
 import 'package:flutter/material.dart';
 
 class DashboardView extends StatefulWidget {
@@ -8,6 +9,7 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends DashboardController {
   var jsonData;
+  List dataElectricmeter = List();
 
   @override
   void initState() {
@@ -18,7 +20,7 @@ class _DashboardViewState extends DashboardController {
   @override
   Widget build(BuildContext context) {
     jsonData = getJsonData();
-    if(jsonData!=null)print(jsonData['data']);
+    if (jsonData != null) print(jsonData['data']);
     return isLoading()
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
@@ -42,6 +44,60 @@ class _DashboardViewState extends DashboardController {
                           Expanded(child: _buildWindVelocity()),
                         ],
                       ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 16.0, 0.0, 0.0),
+                        width: double.infinity,
+                        child: Text(
+                          "Electricity",
+                          style: new TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Stack(
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              navigateToElectricityPage();
+                            },
+                            child: Container(
+                              height: 250,
+                              width: double.infinity,
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 8.0),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              navigateToElectricityPage();
+                            },
+                            child: Card(
+                              child: Center(
+                                child: Container(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                          height: 250,
+                                          width: double.infinity,
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 8.0),
+                                          child: sample1(context)),
+                                      Text(
+                                        "Grafik History Pemakaian Listrik",
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -60,7 +116,7 @@ class _DashboardViewState extends DashboardController {
           Text(
             "Air Condition",
             style: new TextStyle(
-              fontSize: 16.0,
+              fontSize: 24.0,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -77,7 +133,11 @@ class _DashboardViewState extends DashboardController {
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        jsonData['data']['country']+", "+jsonData['data']['state']+", "+jsonData['data']['city'],
+                        jsonData['data']['country'] +
+                            ", " +
+                            jsonData['data']['state'] +
+                            ", " +
+                            jsonData['data']['city'],
                         style: TextStyle(
                           fontSize: 12.0,
                         ),
@@ -116,7 +176,10 @@ class _DashboardViewState extends DashboardController {
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        "• "+jsonData['data']['current']['pollution']['aqius'].toString(),
+                                        "• " +
+                                            jsonData['data']['current']
+                                                    ['pollution']['aqius']
+                                                .toString(),
                                         style: TextStyle(
                                           fontSize: 12.0,
                                           fontWeight: FontWeight.bold,
@@ -212,9 +275,9 @@ class _DashboardViewState extends DashboardController {
               height: 50,
             ),
             Text(
-              jsonData['data']['current']['weather']['tp'].toString()+"°C",
+              jsonData['data']['current']['weather']['tp'].toString() + "°C",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             )
@@ -237,7 +300,7 @@ class _DashboardViewState extends DashboardController {
               height: 50,
             ),
             Text(
-              jsonData['data']['current']['weather']['hu'].toString()+"%",
+              jsonData['data']['current']['weather']['hu'].toString() + "%",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -285,4 +348,193 @@ class _DashboardViewState extends DashboardController {
       ),
     );
   }
+
+  Widget sample1(BuildContext context) {
+    setState(() {
+      if (jsonElectricmeter != null)
+        dataElectricmeter =
+            jsonElectricmeter['data'][0]['tokenpayments']['data'];
+    });
+    var parsedDate =
+        DateTime.parse(dataElectricmeter[0]['created_at'].toString());
+    var parsedDatefrom = new DateTime(
+        parsedDate.year,
+        parsedDate.month,
+        parsedDate.day,
+        parsedDate.hour,
+        parsedDate.minute,
+        parsedDate.second,
+        parsedDate.millisecond,
+        parsedDate.microsecond);
+    final fromDate = parsedDatefrom;
+    print(dataElectricmeter.length);
+
+    var parsedDate2 = DateTime.parse(
+        dataElectricmeter[dataElectricmeter.length - 1]['created_at']
+            .toString());
+    var parsedDateto = new DateTime(
+        parsedDate2.year,
+        parsedDate2.month,
+        parsedDate2.day,
+        parsedDate2.hour,
+        parsedDate2.minute,
+        parsedDate2.second,
+        parsedDate2.millisecond,
+        parsedDate2.microsecond + 1);
+    final toDate = parsedDateto;
+
+    return Center(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    jsonElectricmeter['data'][0]['meter_number'] +
+                        ' - ' +
+                        jsonElectricmeter['data'][0]['meter_information'] +
+                        ' - ' +
+                        jsonElectricmeter['data'][0]['meter_type'],
+                    style: TextStyle(
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  new Spacer(),
+                  Container(
+                    child: IconButton(
+                        icon: Icon(Icons.arrow_forward), onPressed: null),
+                  ),
+                ],
+              ),
+            ),
+            Center(
+              child: Container(
+                height: MediaQuery.of(context).size.height / 4,
+                width: MediaQuery.of(context).size.width,
+                child: BezierChart(
+                  fromDate: fromDate,
+                  bezierChartScale: BezierChartScale.WEEKLY,
+                  toDate: toDate,
+                  selectedDate: toDate,
+                  series: [
+                    BezierLine(
+                        lineColor: Colors.black,
+                        label: "AQI",
+                        onMissingValue: (dateTime) {
+                          return 0;
+                        },
+                        data: List.generate(dataElectricmeter.length, (index) {
+                          return DataPoint<DateTime>(
+                              value: double.parse(dataElectricmeter[index]
+                                      ['nominal']
+                                  .toString()),
+                              xAxis: DateTime.now()
+                                  .subtract(Duration(days: index)));
+                        })),
+                  ],
+                  config: BezierChartConfig(
+                    xAxisTextStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      //color: Color.fromRGBO(10, 120, 10, 100),
+                    ),
+                    verticalIndicatorStrokeWidth: 3.0,
+                    verticalIndicatorColor: Colors.black26,
+                    showVerticalIndicator: true,
+                    verticalIndicatorFixedPosition: false,
+                    footerHeight: 50.0,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget sample1(BuildContext context) {
+  //   setState(() {
+  //     if (jsonElectricmeter != null)
+  //       dataElectricmeter =
+  //           jsonElectricmeter['data'][0]['tokenpayments']['data'];
+  //   });
+
+  //   List x = new List<double>.generate(6, (i) => i + 1 * 1.0);
+  //   print(dataElectricmeter.length);
+  //   return Center(
+  //     child: Container(
+  //       child: Column(
+  //         children: <Widget>[
+  //           Container(
+  //             padding: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
+  //             child: Row(
+  //               // mainAxisAlignment: MainAxisAlignment.start,
+  //               // crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: <Widget>[
+  //                 Text(
+  //                   jsonElectricmeter['data'][0]['meter_number'] +
+  //                       ' - ' +
+  //                       jsonElectricmeter['data'][0]['meter_information'] +
+  //                       ' - ' +
+  //                       jsonElectricmeter['data'][0]['meter_type'],
+  //                   style: TextStyle(
+  //                     fontSize: 12.0,
+  //                   ),
+  //                 ),
+  //                 new Spacer(),
+  //                 Container(
+  //                   child: IconButton(
+  //                       icon: Icon(Icons.arrow_forward), onPressed: null),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Center(
+  //             child: Container(
+  //               //color: Colors.red,
+  //               height: MediaQuery.of(context).size.height / 4,
+  //               width: MediaQuery.of(context).size.width,
+  //               child: BezierChart(
+  //                 bezierChartScale: BezierChartScale.CUSTOM,
+  //                 xAxisCustomValues: x,
+  //                 series: [
+  //                   BezierLine(
+  //                       lineColor: Colors.black,
+  //                       label: "Duty",
+  //                       data: List.generate(6, (index) {
+  //                         return DataPoint<double>(
+  //                             value: double.parse(dataElectricmeter[index]
+  //                                     ['nominal']
+  //                                 .toString()),
+  //                             xAxis: index * 1.0);
+  //                       })),
+  //                 ],
+  //                 config: BezierChartConfig(
+  //                   xAxisTextStyle: TextStyle(
+  //                     color: Colors.black,
+  //                     fontSize: 12,
+  //                     //color: Color.fromRGBO(10, 120, 10, 100),
+  //                   ),
+  //                   verticalIndicatorStrokeWidth: 3.0,
+  //                   verticalIndicatorColor: Colors.black26,
+  //                   showVerticalIndicator: true,
+  //                   verticalIndicatorFixedPosition: false,
+  //                   //physics: const AlwaysScrollableScrollPhysics(),
+  //                   //contentWidth: 400,
+  //                   //backgroundColor: Colors.red,
+  //                   //snap: false,
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

@@ -561,49 +561,69 @@ class _AirConditionViewState extends AirConditionController {
     setState(() {
       if (jsonWeather != null) dataWeather = jsonWeather['data'];
     });
-  var parsedDate = DateTime.parse(jsonWeather['data'][dataWeather.length-1]['created_at'].toString());
-  var parsedDatefrom = new DateTime(parsedDate.year, parsedDate.month, parsedDate.day, parsedDate.hour, parsedDate.minute, parsedDate.second, parsedDate.millisecond, parsedDate.microsecond);
-  final fromDate = parsedDatefrom;
+    var parsedDate = DateTime.parse(
+        jsonWeather['data'][dataWeather.length - 1]['created_at'].toString());
+    var parsedDatefrom = new DateTime(
+        parsedDate.year,
+        parsedDate.month,
+        parsedDate.day,
+        parsedDate.hour,
+        parsedDate.minute,
+        parsedDate.second,
+        parsedDate.millisecond,
+        parsedDate.microsecond);
+    final fromDate = parsedDatefrom;
 
-  var parsedDate2 = DateTime.parse(jsonWeather['data'][0]['created_at'].toString());
-  var parsedDateto = new DateTime(parsedDate2.year, parsedDate2.month, parsedDate2.day, parsedDate2.hour, parsedDate2.minute, parsedDate2.second, parsedDate2.millisecond, parsedDate2.microsecond+1);
-  final toDate = parsedDateto;
+    var parsedDate2 =
+        DateTime.parse(jsonWeather['data'][0]['created_at'].toString());
+    var parsedDateto = new DateTime(
+        parsedDate2.year,
+        parsedDate2.month,
+        parsedDate2.day,
+        parsedDate2.hour,
+        parsedDate2.minute,
+        parsedDate2.second,
+        parsedDate2.millisecond,
+        parsedDate2.microsecond + 1);
+    final toDate = parsedDateto;
 
-  return Center(
-    child: Container(
-      height: MediaQuery.of(context).size.height / 2,
-      width: MediaQuery.of(context).size.width,
-      child: BezierChart(
-        fromDate: fromDate,
-        bezierChartScale: BezierChartScale.WEEKLY,
-        toDate: toDate,
-        selectedDate: toDate,
-        series: [
-          BezierLine(
-            lineColor: Colors.black,
-            label: "AQI",
-            onMissingValue: (dateTime) {
-              return 0;
-            },
-            data: List.generate(dataWeather.length, (index){
-              return DataPoint<DateTime>(value: double.parse(jsonWeather['data'][index]['pollution'].toString()), xAxis: DateTime.now().subtract(Duration(days: index)));
-            })
-          ),
-        ],
-        config: BezierChartConfig(
-          xAxisTextStyle: TextStyle(
+    return Center(
+      child: Container(
+        height: MediaQuery.of(context).size.height / 2,
+        width: MediaQuery.of(context).size.width,
+        child: BezierChart(
+          fromDate: fromDate,
+          bezierChartScale: BezierChartScale.WEEKLY,
+          toDate: toDate,
+          selectedDate: toDate,
+          series: [
+            BezierLine(
+                lineColor: Colors.black,
+                label: "AQI",
+                onMissingValue: (dateTime) {
+                  return 0;
+                },
+                data: List.generate(dataWeather.length, (index) {
+                  return DataPoint<DateTime>(
+                      value: double.parse(
+                          jsonWeather['data'][index]['pollution'].toString()),
+                      xAxis: DateTime.now().subtract(Duration(days: index)));
+                })),
+          ],
+          config: BezierChartConfig(
+            xAxisTextStyle: TextStyle(
               color: Colors.black,
               fontSize: 12,
               //color: Color.fromRGBO(10, 120, 10, 100),
             ),
-          verticalIndicatorStrokeWidth: 3.0,
-          verticalIndicatorColor: Colors.black26,
-          showVerticalIndicator: true,
-          verticalIndicatorFixedPosition: false,
-          footerHeight: 70.0,
+            verticalIndicatorStrokeWidth: 3.0,
+            verticalIndicatorColor: Colors.black26,
+            showVerticalIndicator: true,
+            verticalIndicatorFixedPosition: false,
+            footerHeight: 70.0,
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

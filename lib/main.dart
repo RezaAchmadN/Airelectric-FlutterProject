@@ -1,3 +1,5 @@
+import 'package:airelectric/dashboard_page.dart';
+import 'package:airelectric/electricity_page.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'dart:async';
@@ -20,7 +22,7 @@ class _MyAppState extends State<MyApp> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginPage(),
+          builder: (context) => DashboardPage(),
         ),
       );
     });
