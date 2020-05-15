@@ -60,10 +60,11 @@ abstract class DashboardController extends State<DashboardView> {
   getElectricmeter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String jsonString = prefs.getString('token');
-    print(jsonString);
-    Map userHeader = {'Authorization': jsonString};
+    print("SSS"+jsonString);
+    Map<String, String> userHeader = {'Authorization': "Bearer "+jsonString};
     var response =
-        await http.get("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/readtoken", headers:{"Authorization": "Bearer firsttest"});
+        await http.get("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/readtoken", headers:
+        userHeader);
     if (response.statusCode == 200) {
       this.jsonElectricmeter = json.decode(response.body);
       setState(() {

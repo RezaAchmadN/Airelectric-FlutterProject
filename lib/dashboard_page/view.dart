@@ -91,7 +91,7 @@ class _DashboardViewState extends DashboardController {
                                                   // mainAxisAlignment: MainAxisAlignment.start,
                                                   // crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: <Widget>[
-                                                    Text(
+                                                    dataElectricmeter.isNotEmpty? Text(
                                                       jsonElectricmeter['data']
                                                                   [0]
                                                               ['meter_number'] +
@@ -106,7 +106,7 @@ class _DashboardViewState extends DashboardController {
                                                       style: TextStyle(
                                                         fontSize: 12.0,
                                                       ),
-                                                    ),
+                                                    ): Container(),
                                                     new Spacer(),
                                                     Container(
                                                       child: IconButton(
@@ -354,6 +354,8 @@ class _DashboardViewState extends DashboardController {
   Widget _buildWindVelocity() {
     setState(() {
       if (jsonElectricmeter != null)
+        dataElectricmeter  = jsonElectricmeter["data"];
+        if(dataElectricmeter.isNotEmpty)
         dataElectricmeter =
             jsonElectricmeter['data'][0]['tokenpayments']['data'];
     });

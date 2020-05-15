@@ -32,9 +32,10 @@ abstract class LoginController extends State<LoginView> {
         await http.post("https://desolate-shelf-86894.herokuapp.com/api/auth/login", body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
+      print(jsonData.toString());
       setState(() {
         isLoadingFalse();
-        sharedPreferences.setString("token", jsonData['token']);
+        sharedPreferences.setString("token", jsonData['meta']['token']);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
