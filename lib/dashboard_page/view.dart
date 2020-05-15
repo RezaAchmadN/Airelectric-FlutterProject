@@ -10,6 +10,7 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends DashboardController {
   var jsonData;
   List dataElectricmeter = List();
+  List dataPayment = List();
 
   @override
   void initState() {
@@ -91,17 +92,15 @@ class _DashboardViewState extends DashboardController {
                                                   // mainAxisAlignment: MainAxisAlignment.start,
                                                   // crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: <Widget>[
-                                                    dataElectricmeter.isNotEmpty? Text(
-                                                      jsonElectricmeter['data']
+                                                    jsonElectricmeter.isNotEmpty? Text(
+                                                      jsonElectricmeter
                                                                   [0]
                                                               ['meter_number'] +
                                                           ' - ' +
-                                                          jsonElectricmeter[
-                                                                  'data'][0][
+                                                          jsonElectricmeter[0][
                                                               'meter_information'] +
                                                           ' - ' +
-                                                          jsonElectricmeter[
-                                                                  'data'][0]
+                                                          jsonElectricmeter[0]
                                                               ['meter_type'],
                                                       style: TextStyle(
                                                         fontSize: 12.0,
@@ -117,7 +116,7 @@ class _DashboardViewState extends DashboardController {
                                                   ],
                                                 ),
                                               ),
-                                              dataElectricmeter.isNotEmpty
+                                              dataPayment.isNotEmpty
                                                   ? sample1(context)
                                                   : Container()
                                             ],
@@ -354,10 +353,10 @@ class _DashboardViewState extends DashboardController {
   Widget _buildWindVelocity() {
     setState(() {
       if (jsonElectricmeter != null)
-        dataElectricmeter  = jsonElectricmeter["data"];
-        if(dataElectricmeter.isNotEmpty)
-        dataElectricmeter =
-            jsonElectricmeter['data'][0]['tokenpayments']['data'];
+        dataElectricmeter  = jsonElectricmeter;
+        if(jsonPayment['data'].isNotEmpty)
+        dataPayment =
+            jsonPayment['data'];
     });
     return Card(
       child: Container(
@@ -397,12 +396,13 @@ class _DashboardViewState extends DashboardController {
 
   Widget sample1(BuildContext context) {
     setState(() {
-      if (jsonElectricmeter != null)
-        dataElectricmeter =
-            jsonElectricmeter['data'][0]['tokenpayments']['data'];
+      if (jsonPayment['data'] != null)
+        dataPayment =
+            jsonPayment['data'];
     });
+    print(dataPayment);
     var parsedDate =
-        DateTime.parse(dataElectricmeter[0]['created_at'].toString());
+        DateTime.parse(dataPayment[dataPayment.length - 1]['created_at'].toString());
     var parsedDatefrom = new DateTime(
         parsedDate.year,
         parsedDate.month,
@@ -416,8 +416,7 @@ class _DashboardViewState extends DashboardController {
     print(dataElectricmeter.length);
 
     var parsedDate2 = DateTime.parse(
-        dataElectricmeter[dataElectricmeter.length - 1]['created_at']
-            .toString());
+        dataPayment[dataPayment.length - 1]['created_at'].toString());
     var parsedDateto = new DateTime(
         parsedDate2.year,
         parsedDate2.month,
@@ -449,9 +448,9 @@ class _DashboardViewState extends DashboardController {
                         onMissingValue: (dateTime) {
                           return 0;
                         },
-                        data: List.generate(dataElectricmeter.length, (index) {
+                        data: List.generate(dataPayment.length, (index) {
                           return DataPoint<DateTime>(
-                              value: double.parse(dataElectricmeter[index]
+                              value: double.parse(dataPayment[index]
                                       ['nominal']
                                   .toString()),
                               xAxis: DateTime.now()

@@ -1,4 +1,5 @@
 import 'package:airelectric/electricity_page/view.dart';
+import 'package:airelectric/payment_page.dart';
 import 'package:airelectric/success_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -350,6 +351,13 @@ abstract class ElectricityController extends State<ElectricityView>{
     context,
     MaterialPageRoute(
       builder: (context) => SuccessPage(id: id,type: type,),
+    ));
+  }
+  navigateToPayment(int price){
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PaymentPage(price: price,),
     ));
   }
 }

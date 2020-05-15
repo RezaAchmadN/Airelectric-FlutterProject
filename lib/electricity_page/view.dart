@@ -41,7 +41,7 @@ class _ElectricityViewState extends ElectricityController {
                 title: Text("Electricity"),
                 backgroundColor: Color.fromRGBO(10, 120, 10, 100),
                 actions: <Widget>[
-                  IconButton(
+                  _meterNumber!=null ? IconButton(
                     icon: Icon(
                       Icons.settings,
                       color: Colors.white,
@@ -57,7 +57,7 @@ class _ElectricityViewState extends ElectricityController {
                             edit: _runEdit,
                           ));
                     },
-                  )
+                  ):Container()
                 ],
               ),
               body: SingleChildScrollView(
@@ -215,7 +215,7 @@ class _ElectricityViewState extends ElectricityController {
 
   Widget sample1(BuildContext context) {
     setState(() {
-      if (jsonElectricmeter != null) dataPayment = jsonPayment['data'];
+      if (jsonPayment != null) dataPayment = jsonPayment['data'];
     });
 
     print("aaa" + dataPayment.toString());
@@ -367,11 +367,13 @@ class _ElectricityViewState extends ElectricityController {
                     _meterType == "Bill" &&
                     dataPayment[0]["status"] == "unpaid")
             ? () {
-                if (_meterType == "Token")
+                if (_meterType == "Token"){
                   addPaymentToken(_meterNumber, price);
+                  navigateToPayment(dataPayment[0]["nominal"]);
+                }
                 else
-                  updatePaymentBill(
-                      dataPayment[0]["id"].toString(), "paid", _meterNumber);
+                  navigateToPayment(
+                      dataPayment[0]["nominal"]);
               }
             : null,
         color: Color.fromARGB(100, 10, 120, 10),
