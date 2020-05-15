@@ -35,7 +35,8 @@ abstract class LoginController extends State<LoginView> {
       print(jsonData.toString());
       setState(() {
         isLoadingFalse();
-        sharedPreferences.setString("token", jsonData['meta']['token']);
+        sharedPreferences.setString("token", "firsttest");
+        //jsonData['meta']['token']);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

@@ -25,12 +25,6 @@ class _ElectricityViewState extends ElectricityController {
   String _selectedMeterNumber;
   String _selectedMeterInformation;
 
-  addHistory() {
-    listHistory.add(DynamicHistory(dataPayment[0]['created_at'],
-        dataPayment[0]['nominal'], dataPayment[0]['status']));
-    setState(() {});
-  }
-
   @override
   void initState() {
     getElectricmeter();
@@ -430,7 +424,7 @@ class _ElectricityViewState extends ElectricityController {
       return DynamicHistory(
           f.format(parsedDateto).toString(),
           formatter.format(dataPayment[index]['nominal']),
-          dataPayment[index]['status']);
+          dataPayment[index]['status'],dataPayment[index]['id'].toString(),_navigateToSuccess,dataPayment[index]['token_number']);
     });
 
     return ConstrainedBox(
@@ -479,44 +473,57 @@ class _ElectricityViewState extends ElectricityController {
         editBillElectricmeter(meterNumber, meterInformation);
     });
   }
+  void _navigateToSuccess(String id) {
+    setState(() {
+      navigateToSuccess(id,_meterType);
+    });
+  }
 }
 
 class DynamicHistory extends StatelessWidget {
   final String date;
   final String nominal;
   final String status;
-  DynamicHistory(this.date, this.nominal, this.status);
+  final String id;
+  final String tokenNumber;
+  final void Function(String) success;
+  DynamicHistory(this.date, this.nominal, this.status, this.id, this.success, this.tokenNumber);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 85,
-      child: Card(
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: Text("Tanggal : " + date),
-                    ),
-                    Text("Nominal : " + nominal),
-                  ],
+    return GestureDetector(
+      onTap: (){success(id);},
+          child: Container(
+        height: 105,
+        child: Card(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                        child: Text("Tanggal : " + date),
+                      ),
+                      Text("Nominal : " + nominal),
+                      Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0)),
+                      tokenNumber!=null ? Text("Token Number : " + tokenNumber):Container(),
+                    ],
+                  ),
                 ),
-              ),
-              Text(
-                status.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 20,
-                  color: status == "paid" ? Colors.green : Colors.red,
+                Text(
+                  status.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: status == "paid" ? Colors.green : Colors.red,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

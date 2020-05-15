@@ -1,4 +1,5 @@
 import 'package:airelectric/electricity_page/view.dart';
+import 'package:airelectric/success_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -344,4 +345,11 @@ abstract class ElectricityController extends State<ElectricityView>{
     }
   }
 
+  navigateToSuccess(String id, String type){
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => SuccessPage(id: id,type: type,),
+    ));
+  }
 }
