@@ -18,7 +18,12 @@ class _ElectricityViewState extends ElectricityController {
   String _meterNumber;
   String _meterType;
   String price;
+  String meterTypeDialog;
   List<DynamicHistory> listHistory = List();
+
+  String _selectedId;
+  String _selectedMeterNumber;
+  String _selectedMeterInformation;
 
   addHistory() {
     listHistory.add(DynamicHistory(dataPayment[0]['created_at'],
@@ -77,7 +82,7 @@ class _ElectricityViewState extends ElectricityController {
                                   height: 150,
                                   width: double.infinity,
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 8.0),
-                                  child: sample1(context)),
+                                  child: dataPayment.isNotEmpty? sample1(context):Container()),
                               Text(
                                 "Grafik Pemakaian Listrik",
                                 style: TextStyle(
@@ -126,10 +131,13 @@ class _ElectricityViewState extends ElectricityController {
   Widget _buildDropDownElectricity() {
     setState(() {
       if (jsonElectricmeter != null)
-        dataElectricmeter = jsonElectricmeter['data'];
-      if(_meterNumber == null)_meterNumber = dataElectricmeter[0]['meter_number'];
-      if(_meterType == null)_meterType = dataElectricmeter[0]['meter_type'];
-      //dataPayment = dataElectricmeter[0]['tokenpayments']['data'];
+        dataElectricmeter = jsonElectricmeter;
+      if (_meterNumber == null)
+        _meterNumber = dataElectricmeter[0]['meter_number'];
+      if (_meterType == null) _meterType = dataElectricmeter[0]['meter_type'];
+      if (jsonPayment != null) dataPayment = jsonPayment['data'];
+      //dataPayment.add(dataPayment.length);
+      print("AAA"+ dataPayment.toString());
     });
     return DropdownButton(
       isExpanded: true,
@@ -171,7 +179,21 @@ class _ElectricityViewState extends ElectricityController {
   }
 
   Widget _buildAddIconButton() {
-    return IconButton(icon: Icon(Icons.add), onPressed: addHistory);
+    return IconButton(
+        icon: Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+              context: context,
+              child: new MyDialog(
+                onValueChange: _onValueChange,
+                initialValue: _selectedId,
+                onInfoChange: _onInfoChange,
+                initialInfo: _selectedMeterInformation,
+                onNumberChange: _onNumberChange,
+                initialMeter: _selectedMeterNumber,
+                add: _runAdd,
+              ));
+        });
   }
 
   Widget sample1(BuildContext context) {
@@ -179,7 +201,7 @@ class _ElectricityViewState extends ElectricityController {
       if (jsonElectricmeter != null) dataPayment = jsonPayment['data'];
     });
 
-    print(dataPayment);
+    print("aaa"+dataPayment.toString());
     print(dataPayment[0]['created_at'].toString());
     var parsedDate = DateTime.parse(
         dataPayment[dataPayment.length - 1]['created_at'].toString());
@@ -256,54 +278,7 @@ class _ElectricityViewState extends ElectricityController {
     );
   }
 
-  Widget sample3(BuildContext context) {
-    final fromDate = DateTime(2019, 05, 22);
-    final toDate = DateTime.now();
 
-    final date1 = DateTime.now().subtract(Duration(days: 2));
-    final date2 = DateTime.now().subtract(Duration(days: 3));
-
-    return Center(
-      child: Container(
-        height: MediaQuery.of(context).size.height / 2,
-        width: MediaQuery.of(context).size.width,
-        child: BezierChart(
-          fromDate: fromDate,
-          bezierChartScale: BezierChartScale.WEEKLY,
-          toDate: toDate,
-          selectedDate: toDate,
-          series: [
-            BezierLine(
-              lineColor: Colors.black,
-              label: "Duty",
-              onMissingValue: (dateTime) {
-                if (dateTime.day.isEven) {
-                  return 10.0;
-                }
-                return 5.0;
-              },
-              data: [
-                DataPoint<DateTime>(value: 10, xAxis: date1),
-                DataPoint<DateTime>(value: 50, xAxis: date2),
-              ],
-            ),
-          ],
-          config: BezierChartConfig(
-            xAxisTextStyle: TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-              //color: Color.fromRGBO(10, 120, 10, 100),
-            ),
-            verticalIndicatorStrokeWidth: 3.0,
-            verticalIndicatorColor: Colors.black26,
-            showVerticalIndicator: true,
-            verticalIndicatorFixedPosition: false,
-            footerHeight: 30.0,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildButtonTopUp() {
     return Container(
@@ -375,7 +350,6 @@ class _ElectricityViewState extends ElectricityController {
           formatter.format(dataPayment[index]['nominal']),
           dataPayment[index]['status']);
     });
-    print(dataPayment[0]['nominal']);
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: 400, minHeight: 0.0),
@@ -387,6 +361,30 @@ class _ElectricityViewState extends ElectricityController {
             itemBuilder: (_, index) => listHistory[index]),
       ),
     );
+  }
+
+  void _onValueChange(String value) {
+    setState(() {
+      _selectedId = value;
+    });
+  }
+  void _onNumberChange(String value) {
+    setState(() {
+      _selectedMeterNumber = value;
+    });
+  }
+  void _onInfoChange(String value) {
+    setState(() {
+      _selectedMeterInformation = value;
+    });
+  }
+  void _runAdd(String status, String meterNumber, String meterInformation) {
+    setState(() {
+      if (status == "Token") {
+        addTokenElectricmeter(meterNumber, meterInformation);
+      }
+      else addBillElectricmeter(meterNumber, meterInformation);
+    });
   }
 }
 
@@ -429,6 +427,174 @@ class DynamicHistory extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MyDialog extends StatefulWidget {
+  const MyDialog({this.onValueChange, this.initialValue,this.initialMeter, this.onNumberChange,this.initialInfo, this.onInfoChange, this.add});
+
+  final String initialValue;
+  final void Function(String) onValueChange;
+  final String initialMeter;
+  final void Function(String) onNumberChange;
+  final String initialInfo;
+  final void Function(String) onInfoChange;
+  final void Function(String,String,String) add;
+
+  @override
+  State createState() => new MyDialogState();
+}
+
+class MyDialogState extends State<MyDialog> {
+  String _selectedId;
+  String _selectedMeterNumber;
+  String _selectedMeterInformation;
+
+  TextEditingController numberController = new TextEditingController();
+  TextEditingController infoController = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedId = widget.initialValue;
+  }
+
+  Widget build(BuildContext context) {
+    return new SimpleDialog(
+      backgroundColor: Colors.transparent,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Color.fromARGB(55, 10, 120, 10),
+                width: 3,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          height: 350,
+          padding: EdgeInsets.all(16.0),
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Meter Number",
+                style: new TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              Container(
+                height: 45.0,
+                child: TextField(
+                  controller: numberController,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(55, 10, 120, 10), width: 3.0),
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(55, 10, 120, 10), width: 3.0),
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 8.0)),
+              Text(
+                "Meter Information",
+                style: new TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              Container(
+                height: 45.0,
+                child: TextField(
+                  controller: infoController,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(55, 10, 120, 10), width: 3.0),
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(55, 10, 120, 10), width: 3.0),
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 8.0)),
+              Text(
+                "Meter Type",
+                style: new TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              new Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Color.fromARGB(55, 10, 120, 10),
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                width: double.infinity,
+                height: 45,
+                padding: const EdgeInsets.all(10.0),
+                child: DropdownButtonHideUnderline(
+                  child: new DropdownButton<String>(
+                    hint: const Text("Pick a thing"),
+                    value: _selectedId,
+                    onChanged: (String value) {
+                      setState(() {
+                        _selectedId = value;
+                      });
+                      widget.onValueChange(value);
+                    },
+                    items: <String>['Token', 'Bill']
+                        .map((String value) {
+                      return new DropdownMenuItem<String>(
+                        value: value,
+                        child: new Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(0, 8.0, 0, 0),
+                child: new RaisedButton(
+                  child: Container(
+                    width: double.infinity,
+                    child: Center(child: new Text("Save")),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      print(numberController.text);
+                      print(_selectedId);
+                      widget.add(_selectedId, numberController.text, infoController.text);
+                    });
+                    Navigator.of(context, rootNavigator: true).pop(context);
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

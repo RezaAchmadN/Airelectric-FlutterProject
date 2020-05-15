@@ -82,7 +82,46 @@ class _DashboardViewState extends DashboardController {
                                           width: double.infinity,
                                           padding:
                                               EdgeInsets.fromLTRB(0, 0, 0, 8.0),
-                                          child: sample1(context)),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    8.0, 0.0, 0.0, 0.0),
+                                                child: Row(
+                                                  // mainAxisAlignment: MainAxisAlignment.start,
+                                                  // crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      jsonElectricmeter['data']
+                                                                  [0]
+                                                              ['meter_number'] +
+                                                          ' - ' +
+                                                          jsonElectricmeter[
+                                                                  'data'][0][
+                                                              'meter_information'] +
+                                                          ' - ' +
+                                                          jsonElectricmeter[
+                                                                  'data'][0]
+                                                              ['meter_type'],
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                      ),
+                                                    ),
+                                                    new Spacer(),
+                                                    Container(
+                                                      child: IconButton(
+                                                          icon: Icon(Icons
+                                                              .arrow_forward),
+                                                          onPressed: null),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              dataElectricmeter.isNotEmpty
+                                                  ? sample1(context)
+                                                  : Container()
+                                            ],
+                                          )),
                                       Text(
                                         "Grafik History Pemakaian Listrik",
                                         style: TextStyle(
@@ -313,6 +352,11 @@ class _DashboardViewState extends DashboardController {
   }
 
   Widget _buildWindVelocity() {
+    setState(() {
+      if (jsonElectricmeter != null)
+        dataElectricmeter =
+            jsonElectricmeter['data'][0]['tokenpayments']['data'];
+    });
     return Card(
       child: Container(
         padding: EdgeInsets.all(16),
@@ -387,30 +431,6 @@ class _DashboardViewState extends DashboardController {
       child: Container(
         child: Column(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    jsonElectricmeter['data'][0]['meter_number'] +
-                        ' - ' +
-                        jsonElectricmeter['data'][0]['meter_information'] +
-                        ' - ' +
-                        jsonElectricmeter['data'][0]['meter_type'],
-                    style: TextStyle(
-                      fontSize: 12.0,
-                    ),
-                  ),
-                  new Spacer(),
-                  Container(
-                    child: IconButton(
-                        icon: Icon(Icons.arrow_forward), onPressed: null),
-                  ),
-                ],
-              ),
-            ),
             Center(
               child: Container(
                 height: MediaQuery.of(context).size.height / 4,

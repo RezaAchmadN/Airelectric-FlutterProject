@@ -8,6 +8,7 @@ import 'dart:convert';
 abstract class ElectricityController extends State<ElectricityView>{
   var jsonElectricmeter;
   var jsonPayment;
+  var jsonTemp;
   bool _isLoading = false;
 
   isLoadingTrue() {
@@ -29,7 +30,7 @@ abstract class ElectricityController extends State<ElectricityView>{
     print(jsonString);
     Map userHeader = {'Authorization': jsonString};
     var response =
-        await http.get("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/readtoken", headers:{"Authorization": "Bearer firsttest"});
+        await http.get("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/readall", headers:{"Authorization": "Bearer firsttest"});
     if (response.statusCode == 200) {
       this.jsonElectricmeter = json.decode(response.body);
       setState(() {
@@ -40,8 +41,8 @@ abstract class ElectricityController extends State<ElectricityView>{
           timeInSecForIosWeb: 1,
           fontSize: 16.0);
       });
-      if(jsonElectricmeter['data'][0]['meter_type']=="Token") getPaymentToken(jsonElectricmeter['data'][0]['meter_number']);
-      else getPaymentBill(jsonElectricmeter['data'][0]['meter_number']);
+      if(jsonElectricmeter[0]['meter_type']=="Token") getPaymentToken(jsonElectricmeter[0]['meter_number']);
+      else getPaymentBill(jsonElectricmeter[0]['meter_number']);
     } else {
       setState(() {
         isLoadingFalse();
@@ -56,16 +57,17 @@ abstract class ElectricityController extends State<ElectricityView>{
     }
   }
 
-  addElectricmeter() async {
+  addTokenElectricmeter(String meterNumber, String meterInformation) async {
     isLoadingTrue();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String jsonString = prefs.getString('token');
     print(jsonString);
     Map userHeader = {'Authorization': jsonString};
+    Map userBody = {'meter_number': meterNumber, 'meter_information': meterInformation};
     var response =
-        await http.get("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/readtoken", headers:{"Authorization": "Bearer firsttest"});
-    if (response.statusCode == 200) {
-      this.jsonElectricmeter = json.decode(response.body);
+        await http.post("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/createtoken", headers:{"Authorization": "Bearer firsttest","Accept": "application/json"}, body: userBody);
+    if (response.statusCode == 201) {
+      this.jsonTemp = json.decode(response.body);
       setState(() {
         Fluttertoast.showToast(
           msg: response.statusCode.toString(),
@@ -74,15 +76,50 @@ abstract class ElectricityController extends State<ElectricityView>{
           timeInSecForIosWeb: 1,
           fontSize: 16.0);
       });
-      if(jsonElectricmeter['data'][0]['meter_type']=="Token") getPaymentToken(jsonElectricmeter['data'][0]['meter_number']);
-      else getPaymentBill(jsonElectricmeter['data'][0]['meter_number']);
+      getElectricmeter();
     } else {
       setState(() {
         isLoadingFalse();
       });
-      jsonElectricmeter = json.decode(response.body);
+      print(response.body);
+      jsonTemp = json.decode(response.body);
       Fluttertoast.showToast(
-          msg: jsonElectricmeter['error'],
+          msg: jsonTemp['message'],
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
+    }
+  }
+
+  addBillElectricmeter(String meterNumber, String meterInformation) async {
+    isLoadingTrue();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String jsonString = prefs.getString('token');
+    print(jsonString);
+    Map userHeader = {'Authorization': jsonString};
+    Map userBody = {'meter_number': meterNumber, 'meter_information': meterInformation};
+    var response =
+        await http.post("https://desolate-shelf-86894.herokuapp.com/api/electricmeter/createbill", headers:{"Authorization": "Bearer firsttest","Accept": "application/json"}, body: userBody);
+    if (response.statusCode == 201) {
+      this.jsonTemp = json.decode(response.body);
+      setState(() {
+        Fluttertoast.showToast(
+          msg: response.statusCode.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
+      });
+      getElectricmeter();
+    } else {
+      setState(() {
+        isLoadingFalse();
+      });
+      print(response.body);
+      jsonTemp = json.decode(response.body);
+      Fluttertoast.showToast(
+          msg: jsonTemp['message'],
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
