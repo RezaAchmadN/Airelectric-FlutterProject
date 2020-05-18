@@ -354,7 +354,7 @@ class _DashboardViewState extends DashboardController {
     setState(() {
       if (jsonElectricmeter != null)
         dataElectricmeter  = jsonElectricmeter;
-        if(jsonPayment['data'].isNotEmpty)
+        if(jsonPayment != null)
         dataPayment =
             jsonPayment['data'];
     });
