@@ -604,10 +604,11 @@ class _AirConditionViewState extends AirConditionController {
                   return 0;
                 },
                 data: List.generate(dataWeather.length, (index) {
+                  print(DateTime.parse(jsonWeather['data'][index]['created_at']));
                   return DataPoint<DateTime>(
                       value: double.parse(
                           jsonWeather['data'][index]['pollution'].toString()),
-                      xAxis: DateTime.now().subtract(Duration(days: index)));
+                      xAxis: DateTime.parse(jsonWeather['data'][index]['created_at']));
                 })),
           ],
           config: BezierChartConfig(

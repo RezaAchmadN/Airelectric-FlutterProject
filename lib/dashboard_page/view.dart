@@ -453,8 +453,8 @@ class _DashboardViewState extends DashboardController {
                               value: double.parse(dataPayment[index]
                                       ['nominal']
                                   .toString()),
-                              xAxis: DateTime.now()
-                                  .subtract(Duration(days: index)));
+                              xAxis: DateTime.parse(
+        dataPayment[index]['created_at']));
                         })),
                   ],
                   config: BezierChartConfig(

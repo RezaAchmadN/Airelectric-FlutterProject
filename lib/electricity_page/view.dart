@@ -250,6 +250,8 @@ class _ElectricityViewState extends ElectricityController {
         parsedDate2.millisecond,
         parsedDate2.microsecond + 1);
     final toDate = parsedDateto;
+    print("sss" + toDate.toString());
+    print("sssa" + fromDate.toString());
 
     return Center(
       child: Container(
@@ -272,11 +274,11 @@ class _ElectricityViewState extends ElectricityController {
                           return 0;
                         },
                         data: List.generate(dataPayment.length, (index) {
+                          print(DateTime.parse(dataPayment[index]['created_at']));
                           return DataPoint<DateTime>(
                               value: double.parse(
                                   dataPayment[index]['nominal'].toString()),
-                              xAxis: DateTime.now()
-                                  .subtract(Duration(days: index)));
+                              xAxis: DateTime.parse(dataPayment[index]['created_at']));
                         })),
                   ],
                   config: BezierChartConfig(
